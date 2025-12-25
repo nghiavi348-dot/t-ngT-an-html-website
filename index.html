@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Giáng Sinh 360°</title>
+<style>
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Không gian xoay */
+#scene{
+    width:100vw;
+    height:100vh;
+    perspective:1000px;
+    cursor:grab;
+}
+#world{
+    width:100%;
+    height:100%;
+    transform-style:preserve-3d;
+}
+
+/* Cây thông */
+.tree{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform-style:preserve-3d;
+    transform:translate(-50%,-50%);
+}
+.leaf{
+    width:0;
+    height:0;
+    border-left:120px solid transparent;
+    border-right:120px solid transparent;
+    border-bottom:160px solid #0f8f3a;
+    margin-top:-60px;
+}
+.star{
+    color:gold;
+    font-size:50px;
+    text-align:center;
+}
+
+/* Ảnh bên cạnh */
+.photo{
+    position:absolute;
+    width:200px;
+    height:200px;
+    right:50px;
+    top:50%;
+    transform:translateY(-50%);
+    border-radius:20px;
+    overflow:hidden;
+}
+.photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* Lời chúc */
+#wishes{
+    position:absolute;
+    bottom:60px;
+    width:100%;
+    text-align:center;
+    font-size:22px;
+}
+.line{
+    opacity:0;
+    animation:fade 6s infinite;
+}
+@keyframes fade{
+    0%{opacity:0;}
+    20%{opacity:1;}
+    80%{opacity:1;}
+    100%{opacity:0;}
+}
+
+/* Tuyết */
+.snow{
+    position:absolute;
+    width:4px;
+    height:4px;
+    background:white;
+    border-radius:50%;
+    opacity:.8;
+    animation:fall linear infinite;
+}
+@keyframes fall{
+    to{transform:translateY(110vh);}
+}
+
+/* Chấm trắng li ti */
+.dot{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    opacity:.4;
+}
+</style>
+</head>
+<body>
+
+<div id="scene">
+    <div id="world">
+        <div class="tree">
+            <div class="star">★</div>
+            <div class="leaf"></div>
+            <div class="leaf"></div>
+            <div class="leaf"></div>
+        </div>
+    </div>
+</div>
+
+<div class="photo">
+    <img src="image.jpg" alt="Ảnh Noel">
+</div>
+
+<div id="wishes"></div>
+
+<audio id="music" src="music.mp3" loop></audio>
+
+<script>
+/* Xoay 360 */
+let scene=document.getElementById('scene');
+let world=document.getElementById('world');
+let x=0,y=0,down=false,sx,sy;
+
+scene.onmousedown=e=>{down=true;sx=e.clientX;sy=e.clientY;}
+scene.onmouseup=()=>down=false;
+scene.onmousemove=e=>{
+ if(!down)return;
+ x+=(e.clientY-sy)/5;
+ y+=(e.clientX-sx)/5;
+ world.style.transform=`rotateX(${x}deg) rotateY(${y}deg)`;
+ sx=e.clientX;sy=e.clientY;
+}
+
+/* Nhạc */
+document.body.addEventListener('click',()=>{
+ document.getElementById('music').play();
+},{once:true});
+
+/* Lời chúc */
+const lines=[
+ "🎄 Chúc Tdan một mùa Giáng Sinh an lành ấm áp ",
+ "✨ Tràn đầy hạnh phúc và tiếng cười ",
+ "❄️ Mong mọi điều tốt đẹp sẽ đến vs Tdan",
+ "🎁 Merry Christmas  "
+];
+let wish=document.getElementById('wishes');
+let i=0;
+setInterval(()=>{
+ wish.innerHTML=`<div class='line' style='color:hsl(${Math.random()*360},100%,70%)'>${lines[i]}</div>`;
+ i=(i+1)%lines.length;
+},3000);
+
+/* Tuyết */
+for(let i=0;i<120;i++){
+ let s=document.createElement('div');
+ s.className='snow';
+ s.style.left=Math.random()*100+'vw';
+ s.style.animationDuration=3+Math.random()*5+'s';
+ s.style.opacity=Math.random();
+ document.body.appendChild(s);
+}
+
+/* Chấm li ti */
+for(let i=0;i<200;i++){
+ let d=document.createElement('div');
+ d.className='dot';
+ d.style.left=Math.random()*100+'vw';
+ d.style.top=Math.random()*100+'vh';
+ document.body.appendChild(d);
+}
+</script>
+
+</body>
+</html>
